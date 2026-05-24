@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Noto Sans KR', 'Pretendard', system-ui, -apple-system,
+    BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d6d3d1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a29e;
+}
+
+/* 카드 상세 본문 — 마크다운에서 변환된 HTML */
+.md-body {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #292524;
+}
+.md-body h2 {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1c1917;
+  margin: 22px 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e7e5e4;
+}
+.md-body h2:first-child {
+  margin-top: 0;
+}
+.md-body h3 {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0a766a;
+  margin: 16px 0 6px;
+}
+.md-body h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #44403c;
+  margin: 12px 0 4px;
+}
+.md-body p {
+  margin: 6px 0;
+}
+.md-body ul {
+  margin: 6px 0;
+  padding-left: 18px;
+  list-style: disc;
+}
+.md-body ol {
+  margin: 6px 0;
+  padding-left: 20px;
+  list-style: decimal;
+}
+.md-body li {
+  margin: 3px 0;
+}
+.md-body strong {
+  font-weight: 700;
+  color: #1c1917;
+}
+.md-body hr {
+  border: 0;
+  border-top: 1px solid #e7e5e4;
+  margin: 18px 0;
+}
+.md-body em {
+  font-style: normal;
+  color: #78716c;
+  font-size: 12px;
+}
+.md-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  font-size: 12.5px;
+}
+.md-body th {
+  background: #f5f5f4;
+  border: 1px solid #e7e5e4;
+  padding: 6px 8px;
+  text-align: left;
+  font-weight: 700;
+  color: #44403c;
+}
+.md-body td {
+  border: 1px solid #e7e5e4;
+  padding: 6px 8px;
+  vertical-align: top;
+  color: #44403c;
+}
+.md-body tr:nth-child(even) td {
+  background: #fafaf9;
+}
