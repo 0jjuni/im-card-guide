@@ -1,11 +1,17 @@
 // 카드 데이터 계층.
-// Supabase 가 설정돼 있으면 DB 를, 아니면 로컬 시드 데이터(src/data/cards.js)를 사용합니다.
-import { supabase } from "./supabase";
+// Supabase env 가 설정돼 있으면 DB(REST API)를, 아니면 로컬 시드 데이터를 사용합니다.
+//
+// 주의: 처음에는 @supabase/supabase-js 를 썼는데 새 publishable key 포맷과 결합되어
+// 브라우저에서 Headers.set 시 ISO-8859-1 범위 밖 문자가 들어가는 TypeError가
+// 재현되어 supabase-js 의존을 제거하고 PostgREST REST API 를 직접 호출합니다.
 import { CARDS as LOCAL_CARDS } from "../data/cards";
 
-export const usingSupabase = () => Boolean(supabase);
+const url = import.meta.env.VITE_SUPABASE_URL;
+const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const configured = Boolean(url && anonKey);
 
-// Supabase row -> 앱 카드 객체
+export const usingSupabase = () => configured;
+
 const fromRow = (r) => ({
   id: r.id,
   name: r.name,
@@ -22,7 +28,6 @@ const fromRow = (r) => ({
   mdfile: r.source_file || "",
 });
 
-// 앱 카드 객체 -> Supabase row
 const toRow = (c) => ({
   name: c.name,
   type: c.type,
@@ -38,55 +43,63 @@ const toRow = (c) => ({
   source_file: c.mdfile || null,
 });
 
+async function rest(path, { method = "GET", body, prefer } = {}) {
+  if (!configured) throw new Error("Supabase 가 설정되지 않았습니다.");
+  const headers = {
+    apikey: anonKey,
+    Authorization: `Bearer ${anonKey}`,
+    Accept: "application/json",
+  };
+  if (body !== undefined) headers["Content-Type"] = "application/json";
+  if (prefer) headers["Prefer"] = prefer;
+  const res = await fetch(`${url}/rest/v1/${path}`, {
+    method,
+    headers,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`${res.status} ${res.statusText}${text ? ` — ${text}` : ""}`);
+  }
+  if (res.status === 204) return null;
+  return res.json();
+}
+
 export async function loadCards() {
-  if (!supabase) {
+  if (!configured) {
     return [...LOCAL_CARDS].sort((a, b) => a.name.localeCompare(b.name, "ko"));
   }
-  const { data, error } = await supabase
-    .from("cards")
-    .select("*")
-    .order("name", { ascending: true });
-  if (error) throw error;
+  const data = await rest("cards?select=*&order=name.asc");
   return data.map(fromRow);
 }
 
 export async function createCard(card) {
-  if (!supabase) throw new Error("Supabase 가 설정되지 않았습니다.");
-  const { data, error } = await supabase
-    .from("cards")
-    .insert(toRow(card))
-    .select()
-    .single();
-  if (error) throw error;
-  return fromRow(data);
+  const rows = await rest("cards", {
+    method: "POST",
+    body: toRow(card),
+    prefer: "return=representation",
+  });
+  return fromRow(rows[0]);
 }
 
 export async function updateCard(id, card) {
-  if (!supabase) throw new Error("Supabase 가 설정되지 않았습니다.");
-  const { data, error } = await supabase
-    .from("cards")
-    .update(toRow(card))
-    .eq("id", id)
-    .select()
-    .single();
-  if (error) throw error;
-  return fromRow(data);
+  const rows = await rest(`cards?id=eq.${id}`, {
+    method: "PATCH",
+    body: toRow(card),
+    prefer: "return=representation",
+  });
+  return fromRow(rows[0]);
 }
 
 export async function setCardStatus(id, status) {
-  if (!supabase) throw new Error("Supabase 가 설정되지 않았습니다.");
-  const { data, error } = await supabase
-    .from("cards")
-    .update({ status })
-    .eq("id", id)
-    .select()
-    .single();
-  if (error) throw error;
-  return fromRow(data);
+  const rows = await rest(`cards?id=eq.${id}`, {
+    method: "PATCH",
+    body: { status },
+    prefer: "return=representation",
+  });
+  return fromRow(rows[0]);
 }
 
 export async function deleteCard(id) {
-  if (!supabase) throw new Error("Supabase 가 설정되지 않았습니다.");
-  const { error } = await supabase.from("cards").delete().eq("id", id);
-  if (error) throw error;
+  await rest(`cards?id=eq.${id}`, { method: "DELETE" });
 }
