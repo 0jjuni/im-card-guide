@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { X, Download } from "lucide-react";
 import { cn, typeBadge, statusBadge } from "../lib/format";
 
 export const CardModal = ({ card, onClose }) => {
@@ -70,8 +70,19 @@ export const CardModal = ({ card, onClose }) => {
           />
         </div>
 
-        <div className="px-5 py-2.5 border-t border-stone-100 flex-shrink-0">
-          <p className="text-[10px] text-stone-400 leading-relaxed">
+        <div className="px-5 py-2.5 border-t border-stone-100 flex-shrink-0 flex items-center gap-3">
+          {card.pdfUrl && (
+            <a
+              href={card.pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-[12px] font-medium text-im-700 hover:text-im-800 hover:underline"
+            >
+              <Download className="w-3.5 h-3.5" />
+              상품설명서 PDF
+            </a>
+          )}
+          <p className="text-[10px] text-stone-400 leading-relaxed flex-1">
             iM뱅크 카드 상품설명서 기반 정리 자료입니다. 정확한 약관·조건은 원본
             상품설명서 및 약관을 따릅니다.
           </p>

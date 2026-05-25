@@ -26,6 +26,7 @@ const fromRow = (r) => ({
   rawcats: r.raw_cats || [],
   body: r.body || "",
   mdfile: r.source_file || "",
+  pdfUrl: r.pdf_url || "",
 });
 
 const toRow = (c) => ({
@@ -41,6 +42,7 @@ const toRow = (c) => ({
   raw_cats: c.rawcats?.length ? c.rawcats : c.cats || [],
   body: c.body || "",
   source_file: c.mdfile || null,
+  pdf_url: c.pdfUrl || null,
 });
 
 async function rest(path, { method = "GET", body, prefer } = {}) {
