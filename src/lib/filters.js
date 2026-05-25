@@ -53,14 +53,16 @@ export function matchesFee(card, selected) {
 }
 
 // 카드 배열로부터 각 필터 옵션의 count 를 계산
-export function buildFilterCounts(cards) {
+// (단종/기관전용 제외 카드 기준 — 기본 화면에 표시되는 카드 풀)
+export function buildFilterCounts(cards, { showDiscontinued = false, showAffiliated = false } = {}) {
   const holders = {};
   const types = {};
   const fees = {};
   const cats = {};
   const brands = {};
   for (const c of cards) {
-    if (c.status === "단종") continue; // 단종은 기본 숨김이므로 카운트에서 제외
+    if (!showDiscontinued && c.status === "단종") continue;
+    if (!showAffiliated && c.affiliated) continue;
     if (c.holder) {
       for (const h of c.holder.split(",").map((s) => s.trim())) {
         holders[h] = (holders[h] || 0) + 1;
@@ -82,8 +84,8 @@ export function buildFilterCounts(cards) {
 }
 
 // 혜택 카테고리 목록 (카운트 내림차순)
-export function listCats(cards) {
-  const counts = buildFilterCounts(cards).cats;
+export function listCats(cards, opts) {
+  const counts = buildFilterCounts(cards, opts).cats;
   return Object.entries(counts)
     .sort((a, b) => b[1] - a[1])
     .map(([name, count]) => ({ name, count }));

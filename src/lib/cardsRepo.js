@@ -29,6 +29,7 @@ const fromRow = (r) => ({
   pdfUrl: r.pdf_url || "",
   holder: r.holder || "",
   brands: r.brands || [],
+  affiliated: !!r.affiliated,
 });
 
 const toRow = (c) => ({
@@ -47,6 +48,7 @@ const toRow = (c) => ({
   pdf_url: c.pdfUrl || null,
   holder: c.holder || null,
   brands: c.brands || [],
+  affiliated: !!c.affiliated,
 });
 
 async function rest(path, { method = "GET", body, prefer } = {}) {

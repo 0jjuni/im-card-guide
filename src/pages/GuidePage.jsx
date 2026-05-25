@@ -22,18 +22,26 @@ export const GuidePage = ({ cards }) => {
   const [brands, setBrands] = useState([]);
   const [cats, setCats] = useState([]);
   const [showDiscontinued, setShowDiscontinued] = useState(false);
+  const [showAffiliated, setShowAffiliated] = useState(false);
   const [openId, setOpenId] = useState(null);
   const [compareIds, setCompareIds] = useState([]);
   const [compareOpen, setCompareOpen] = useState(false);
   const MAX_COMPARE = 4;
 
-  const counts = useMemo(() => buildFilterCounts(cards), [cards]);
-  const catList = useMemo(() => listCats(cards), [cards]);
+  const counts = useMemo(
+    () => buildFilterCounts(cards, { showDiscontinued, showAffiliated }),
+    [cards, showDiscontinued, showAffiliated]
+  );
+  const catList = useMemo(
+    () => listCats(cards, { showDiscontinued, showAffiliated }),
+    [cards, showDiscontinued, showAffiliated]
+  );
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return cards.filter((c) => {
       if (!showDiscontinued && c.status === "단종") return false;
+      if (!showAffiliated && c.affiliated) return false;
       if (!matchesHolder(c, holders)) return false;
       if (types.length && !types.includes(c.type)) return false;
       if (!matchesFee(c, fees)) return false;
@@ -55,7 +63,7 @@ export const GuidePage = ({ cards }) => {
       }
       return true;
     });
-  }, [cards, query, holders, types, fees, brands, cats, showDiscontinued]);
+  }, [cards, query, holders, types, fees, brands, cats, showDiscontinued, showAffiliated]);
 
   const openCard =
     openId != null ? cards.find((c) => c.id === openId) : null;
@@ -70,6 +78,7 @@ export const GuidePage = ({ cards }) => {
     setBrands([]);
     setCats([]);
     setShowDiscontinued(false);
+    setShowAffiliated(false);
   };
 
   const toggleCompare = (id) => {
@@ -108,7 +117,8 @@ export const GuidePage = ({ cards }) => {
     fees.length ||
     brands.length ||
     cats.length ||
-    showDiscontinued;
+    showDiscontinued ||
+    showAffiliated;
 
   return (
     <div
@@ -162,6 +172,7 @@ export const GuidePage = ({ cards }) => {
             brands={brands}
             cats={cats}
             showDiscontinued={showDiscontinued}
+            showAffiliated={showAffiliated}
             counts={counts}
             catList={catList}
             onToggleHolder={toggle(setHolders)}
@@ -170,6 +181,7 @@ export const GuidePage = ({ cards }) => {
             onToggleBrand={toggle(setBrands)}
             onToggleCat={toggle(setCats)}
             onToggleDiscontinued={() => setShowDiscontinued((v) => !v)}
+            onToggleAffiliated={() => setShowAffiliated((v) => !v)}
             onReset={reset}
             hasFilter={hasFilter}
           />

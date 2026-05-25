@@ -42,6 +42,7 @@ export const FilterBar = ({
   brands,
   cats,
   showDiscontinued,
+  showAffiliated,
   counts,
   catList,
   onToggleHolder,
@@ -50,6 +51,7 @@ export const FilterBar = ({
   onToggleBrand,
   onToggleCat,
   onToggleDiscontinued,
+  onToggleAffiliated,
   onReset,
   hasFilter,
 }) => {
@@ -201,15 +203,26 @@ export const FilterBar = ({
       )}
 
       <div className="border-t border-stone-100 pt-2 flex items-center justify-between flex-wrap gap-2">
-        <label className="inline-flex items-center gap-1.5 text-[12px] text-stone-600 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={showDiscontinued}
-            onChange={onToggleDiscontinued}
-            className="accent-im-600"
-          />
-          단종 카드도 표시
-        </label>
+        <div className="flex items-center gap-4 flex-wrap">
+          <label className="inline-flex items-center gap-1.5 text-[12px] text-stone-600 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showAffiliated}
+              onChange={onToggleAffiliated}
+              className="accent-im-600"
+            />
+            기관·제휴 전용 카드도 표시
+          </label>
+          <label className="inline-flex items-center gap-1.5 text-[12px] text-stone-600 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showDiscontinued}
+              onChange={onToggleDiscontinued}
+              className="accent-im-600"
+            />
+            단종 카드도 표시
+          </label>
+        </div>
         {hasFilter && (
           <button
             onClick={onReset}

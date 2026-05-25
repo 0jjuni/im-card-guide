@@ -72,6 +72,11 @@ export const CardTile = ({
                 단종
               </span>
             )}
+            {card.affiliated && (
+              <span className="text-[9px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1 py-0.5 rounded-sm flex-shrink-0">
+                제휴
+              </span>
+            )}
           </div>
           <div className="text-[12px] text-stone-500 truncate mt-0.5">
             {card.summary || card.targetText}
