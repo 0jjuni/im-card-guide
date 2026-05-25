@@ -6,6 +6,7 @@ import { CardGrid } from "../components/CardGrid";
 import { CardModal } from "../components/CardModal";
 import { CompareBar } from "../components/CompareBar";
 import { CompareModal } from "../components/CompareModal";
+import { cn } from "../lib/format";
 import {
   matchesHolder,
   matchesFee,
@@ -24,26 +25,40 @@ export const GuidePage = ({ cards }) => {
   const [cats, setCats] = useState([]);
   const [spend, setSpend] = useState(null);
   const [showDiscontinued, setShowDiscontinued] = useState(false);
-  const [showAffiliated, setShowAffiliated] = useState(false);
+  const [mode, setMode] = useState("general"); // 'general' | 'affiliated'
   const [openId, setOpenId] = useState(null);
   const [compareIds, setCompareIds] = useState([]);
   const [compareOpen, setCompareOpen] = useState(false);
   const MAX_COMPARE = 4;
 
+  // 현재 모드에 해당하는 카드 풀 (general / affiliated)
+  const modePool = useMemo(
+    () => cards.filter((c) => (mode === "affiliated" ? c.affiliated : !c.affiliated)),
+    [cards, mode]
+  );
+
   const counts = useMemo(
-    () => buildFilterCounts(cards, { showDiscontinued, showAffiliated }),
-    [cards, showDiscontinued, showAffiliated]
+    () => buildFilterCounts(modePool, { showDiscontinued, showAffiliated: true }),
+    [modePool, showDiscontinued]
   );
   const catList = useMemo(
-    () => listCats(cards, { showDiscontinued, showAffiliated }),
-    [cards, showDiscontinued, showAffiliated]
+    () => listCats(modePool, { showDiscontinued, showAffiliated: true }),
+    [modePool, showDiscontinued]
+  );
+
+  const generalTotal = useMemo(
+    () => cards.filter((c) => !c.affiliated && c.status !== "단종").length,
+    [cards]
+  );
+  const affiliatedTotal = useMemo(
+    () => cards.filter((c) => c.affiliated && c.status !== "단종").length,
+    [cards]
   );
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return cards.filter((c) => {
+    return modePool.filter((c) => {
       if (!showDiscontinued && c.status === "단종") return false;
-      if (!showAffiliated && c.affiliated) return false;
       if (!matchesHolder(c, holders)) return false;
       if (types.length && !types.includes(c.type)) return false;
       if (!matchesFee(c, fees)) return false;
@@ -66,7 +81,7 @@ export const GuidePage = ({ cards }) => {
       }
       return true;
     });
-  }, [cards, query, holders, types, fees, brands, cats, spend, showDiscontinued, showAffiliated]);
+  }, [modePool, query, holders, types, fees, brands, cats, spend, showDiscontinued]);
 
   const openCard =
     openId != null ? cards.find((c) => c.id === openId) : null;
@@ -82,7 +97,6 @@ export const GuidePage = ({ cards }) => {
     setCats([]);
     setSpend(null);
     setShowDiscontinued(false);
-    setShowAffiliated(false);
   };
 
   const toggleCompare = (id) => {
@@ -122,8 +136,7 @@ export const GuidePage = ({ cards }) => {
     brands.length ||
     cats.length ||
     spend ||
-    showDiscontinued ||
-    showAffiliated;
+    showDiscontinued;
 
   return (
     <div
@@ -159,6 +172,43 @@ export const GuidePage = ({ cards }) => {
           </div>
         </div>
 
+        <div className="mb-3 inline-flex bg-white border border-stone-200 rounded-md p-0.5">
+          {[
+            { id: "general", label: "일반 카드", count: generalTotal },
+            { id: "affiliated", label: "기관·제휴 카드", count: affiliatedTotal },
+          ].map((t) => (
+            <button
+              key={t.id}
+              onClick={() => {
+                setMode(t.id);
+                // 모드 전환 시 필터 초기화 — 두 카드 풀이 달라서 필터 카운트도 달라짐
+                setHolders([]);
+                setTypes([]);
+                setFees([]);
+                setBrands([]);
+                setCats([]);
+                setSpend(null);
+              }}
+              className={cn(
+                "px-3.5 py-1.5 text-[13px] rounded-sm font-semibold transition-colors",
+                mode === t.id
+                  ? "bg-im-600 text-white"
+                  : "text-stone-600 hover:text-stone-900"
+              )}
+            >
+              {t.label}
+              <span
+                className={cn(
+                  "ml-1.5 text-[11px] font-normal",
+                  mode === t.id ? "text-im-100" : "text-stone-400"
+                )}
+              >
+                {t.count}
+              </span>
+            </button>
+          ))}
+        </div>
+
         <div className="relative mb-3">
           <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
@@ -178,7 +228,6 @@ export const GuidePage = ({ cards }) => {
             cats={cats}
             spend={spend}
             showDiscontinued={showDiscontinued}
-            showAffiliated={showAffiliated}
             counts={counts}
             catList={catList}
             onToggleHolder={toggle(setHolders)}
@@ -188,7 +237,6 @@ export const GuidePage = ({ cards }) => {
             onToggleCat={toggle(setCats)}
             onSetSpend={setSpend}
             onToggleDiscontinued={() => setShowDiscontinued((v) => !v)}
-            onToggleAffiliated={() => setShowAffiliated((v) => !v)}
             onReset={reset}
             hasFilter={hasFilter}
           />
