@@ -54,6 +54,19 @@ export const CardModal = ({ card, onClose }) => {
           </button>
         </div>
 
+        {card.targetText && (
+          <div className="px-5 md:px-8 py-2 bg-stone-50 border-b border-stone-100 flex-shrink-0">
+            <div className="flex items-start gap-2 text-[12px]">
+              <span className="text-stone-500 font-bold uppercase tracking-wider text-[10px] mt-0.5 flex-shrink-0">
+                발급대상
+              </span>
+              <span className="text-stone-700 leading-relaxed">
+                {card.targetText}
+              </span>
+            </div>
+          </div>
+        )}
+
         {card.status === "단종" && (
           <div className="px-5 py-2 bg-rose-50 border-b border-rose-100 flex-shrink-0">
             <p className="text-[12px] text-rose-700 font-medium">

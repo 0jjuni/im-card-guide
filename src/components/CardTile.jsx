@@ -73,9 +73,16 @@ export const CardTile = ({
               </span>
             )}
           </div>
-          <div className="text-[12px] text-stone-500 truncate mt-0.5">
-            {card.summary || card.targetText}
-          </div>
+          {card.summary && (
+            <div className="text-[12px] text-stone-500 truncate mt-0.5">
+              {card.summary}
+            </div>
+          )}
+          {card.targetText && (
+            <div className="text-[11px] text-stone-400 truncate mt-0.5">
+              <span className="text-stone-500 font-medium">발급</span> · {card.targetText}
+            </div>
+          )}
           {card.cats.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-1.5">
               {card.cats.slice(0, 6).map((c) => (
