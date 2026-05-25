@@ -1,7 +1,7 @@
 import { RotateCcw, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { cn } from "../lib/format";
-import { HOLDERS, TYPES, FEE_BUCKETS, BRANDS } from "../lib/filters";
+import { HOLDERS, TYPES, FEE_BUCKETS, BRANDS, SPEND_BUCKETS } from "../lib/filters";
 
 const Chip = ({ active, onClick, children, accent = "im" }) => {
   const palette =
@@ -41,6 +41,7 @@ export const FilterBar = ({
   fees,
   brands,
   cats,
+  spend,
   showDiscontinued,
   showAffiliated,
   counts,
@@ -50,6 +51,7 @@ export const FilterBar = ({
   onToggleFee,
   onToggleBrand,
   onToggleCat,
+  onSetSpend,
   onToggleDiscontinued,
   onToggleAffiliated,
   onReset,
@@ -118,6 +120,26 @@ export const FilterBar = ({
                 )}
               >
                 {counts.fees[b.id] || 0}
+              </span>
+            </Chip>
+          ))}
+        </Group>
+
+        <Group label="월 사용액">
+          {SPEND_BUCKETS.map((b) => (
+            <Chip
+              key={b.id}
+              active={spend === b.id}
+              onClick={() => onSetSpend(spend === b.id ? null : b.id)}
+            >
+              {b.label}
+              <span
+                className={cn(
+                  "text-[10px]",
+                  spend === b.id ? "text-im-100" : "text-stone-400"
+                )}
+              >
+                {counts.spends[b.id] || 0}
               </span>
             </Chip>
           ))}

@@ -10,6 +10,7 @@ import {
   matchesHolder,
   matchesFee,
   matchesBrands,
+  matchesSpend,
   buildFilterCounts,
   listCats,
 } from "../lib/filters";
@@ -21,6 +22,7 @@ export const GuidePage = ({ cards }) => {
   const [fees, setFees] = useState([]);
   const [brands, setBrands] = useState([]);
   const [cats, setCats] = useState([]);
+  const [spend, setSpend] = useState(null);
   const [showDiscontinued, setShowDiscontinued] = useState(false);
   const [showAffiliated, setShowAffiliated] = useState(false);
   const [openId, setOpenId] = useState(null);
@@ -46,6 +48,7 @@ export const GuidePage = ({ cards }) => {
       if (types.length && !types.includes(c.type)) return false;
       if (!matchesFee(c, fees)) return false;
       if (!matchesBrands(c, brands)) return false;
+      if (!matchesSpend(c, spend)) return false;
       if (cats.length && !cats.every((cat) => c.cats.includes(cat))) return false;
       if (q) {
         const hay = (
@@ -63,7 +66,7 @@ export const GuidePage = ({ cards }) => {
       }
       return true;
     });
-  }, [cards, query, holders, types, fees, brands, cats, showDiscontinued, showAffiliated]);
+  }, [cards, query, holders, types, fees, brands, cats, spend, showDiscontinued, showAffiliated]);
 
   const openCard =
     openId != null ? cards.find((c) => c.id === openId) : null;
@@ -77,6 +80,7 @@ export const GuidePage = ({ cards }) => {
     setFees([]);
     setBrands([]);
     setCats([]);
+    setSpend(null);
     setShowDiscontinued(false);
     setShowAffiliated(false);
   };
@@ -117,6 +121,7 @@ export const GuidePage = ({ cards }) => {
     fees.length ||
     brands.length ||
     cats.length ||
+    spend ||
     showDiscontinued ||
     showAffiliated;
 
@@ -171,6 +176,7 @@ export const GuidePage = ({ cards }) => {
             fees={fees}
             brands={brands}
             cats={cats}
+            spend={spend}
             showDiscontinued={showDiscontinued}
             showAffiliated={showAffiliated}
             counts={counts}
@@ -180,6 +186,7 @@ export const GuidePage = ({ cards }) => {
             onToggleFee={toggle(setFees)}
             onToggleBrand={toggle(setBrands)}
             onToggleCat={toggle(setCats)}
+            onSetSpend={setSpend}
             onToggleDiscontinued={() => setShowDiscontinued((v) => !v)}
             onToggleAffiliated={() => setShowAffiliated((v) => !v)}
             onReset={reset}

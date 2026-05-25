@@ -30,6 +30,7 @@ const fromRow = (r) => ({
   holder: r.holder || "",
   brands: r.brands || [],
   affiliated: !!r.affiliated,
+  minSpend: r.min_spend ?? null,
 });
 
 const toRow = (c) => ({
@@ -49,6 +50,7 @@ const toRow = (c) => ({
   holder: c.holder || null,
   brands: c.brands || [],
   affiliated: !!c.affiliated,
+  min_spend: c.minSpend ?? null,
 });
 
 async function rest(path, { method = "GET", body, prefer } = {}) {

@@ -30,11 +30,28 @@ export const FEE_BUCKETS = [
   { id: "gt5", label: "5만원 초과", min: 50001, max: Infinity },
 ];
 
+// 월 사용액 구간 — 단일 선택. 고객의 월 카드 사용액에 맞춰 임계값(min_spend, 만원 단위)
+// 이하인 카드만 보여줌. 임계값 없는 카드는 모든 구간에서 표시.
+export const SPEND_BUCKETS = [
+  { id: "s0", label: "월 30만원 미만", upTo: 0 },
+  { id: "s30", label: "월 30~60만원", upTo: 30 },
+  { id: "s60", label: "월 60~100만원", upTo: 60 },
+  { id: "s100", label: "월 100만원 이상", upTo: 1e9 },
+];
+
 export function matchesHolder(card, selected) {
   if (!selected.length) return true;
   if (!card.holder) return false;
   const cardHolders = card.holder.split(",").map((s) => s.trim());
   return selected.some((s) => cardHolders.includes(s));
+}
+
+export function matchesSpend(card, bucketId) {
+  if (!bucketId) return true;
+  const b = SPEND_BUCKETS.find((x) => x.id === bucketId);
+  if (!b) return true;
+  if (card.minSpend == null) return true; // 조건 없는 카드는 항상 통과
+  return card.minSpend <= b.upTo;
 }
 
 export function matchesBrands(card, selected) {
@@ -80,7 +97,17 @@ export function buildFilterCounts(cards, { showDiscontinued = false, showAffilia
     for (const cat of c.cats || []) cats[cat] = (cats[cat] || 0) + 1;
     for (const br of c.brands || []) brands[br] = (brands[br] || 0) + 1;
   }
-  return { holders, types, fees, cats, brands };
+  // 월 사용액 구간 카운트 (각 구간에서 표시 가능한 카드 수)
+  const spends = {};
+  for (const b of SPEND_BUCKETS) {
+    spends[b.id] = cards.filter((c) => {
+      if (!showDiscontinued && c.status === "단종") return false;
+      if (!showAffiliated && c.affiliated) return false;
+      if (c.minSpend == null) return true;
+      return c.minSpend <= b.upTo;
+    }).length;
+  }
+  return { holders, types, fees, cats, brands, spends };
 }
 
 // 혜택 카테고리 목록 (카운트 내림차순)
