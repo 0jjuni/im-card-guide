@@ -7,6 +7,7 @@ import { CardModal } from "../components/CardModal";
 import {
   matchesHolder,
   matchesFee,
+  matchesBrands,
   buildFilterCounts,
   listCats,
 } from "../lib/filters";
@@ -16,6 +17,7 @@ export const GuidePage = ({ cards }) => {
   const [holders, setHolders] = useState([]);
   const [types, setTypes] = useState([]);
   const [fees, setFees] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [cats, setCats] = useState([]);
   const [showDiscontinued, setShowDiscontinued] = useState(false);
   const [openId, setOpenId] = useState(null);
@@ -30,6 +32,7 @@ export const GuidePage = ({ cards }) => {
       if (!matchesHolder(c, holders)) return false;
       if (types.length && !types.includes(c.type)) return false;
       if (!matchesFee(c, fees)) return false;
+      if (!matchesBrands(c, brands)) return false;
       if (cats.length && !cats.every((cat) => c.cats.includes(cat))) return false;
       if (q) {
         const hay = (
@@ -47,7 +50,7 @@ export const GuidePage = ({ cards }) => {
       }
       return true;
     });
-  }, [cards, query, holders, types, fees, cats, showDiscontinued]);
+  }, [cards, query, holders, types, fees, brands, cats, showDiscontinued]);
 
   const openCard =
     openId != null ? cards.find((c) => c.id === openId) : null;
@@ -59,6 +62,7 @@ export const GuidePage = ({ cards }) => {
     setHolders([]);
     setTypes([]);
     setFees([]);
+    setBrands([]);
     setCats([]);
     setShowDiscontinued(false);
   };
@@ -83,6 +87,7 @@ export const GuidePage = ({ cards }) => {
     holders.length ||
     types.length ||
     fees.length ||
+    brands.length ||
     cats.length ||
     showDiscontinued;
 
@@ -135,6 +140,7 @@ export const GuidePage = ({ cards }) => {
             holders={holders}
             types={types}
             fees={fees}
+            brands={brands}
             cats={cats}
             showDiscontinued={showDiscontinued}
             counts={counts}
@@ -142,6 +148,7 @@ export const GuidePage = ({ cards }) => {
             onToggleHolder={toggle(setHolders)}
             onToggleType={toggle(setTypes)}
             onToggleFee={toggle(setFees)}
+            onToggleBrand={toggle(setBrands)}
             onToggleCat={toggle(setCats)}
             onToggleDiscontinued={() => setShowDiscontinued((v) => !v)}
             onReset={reset}

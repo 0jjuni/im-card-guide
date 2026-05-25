@@ -6,6 +6,16 @@ export const HOLDERS = [
   { id: "기업", label: "기업 카드" },
 ];
 
+export const BRANDS = [
+  { id: "BC국내전용", label: "BC 국내전용" },
+  { id: "BC글로벌", label: "BC 글로벌" },
+  { id: "VISA", label: "VISA" },
+  { id: "MASTER", label: "MASTER" },
+  { id: "UnionPay", label: "UnionPay" },
+  { id: "JCB", label: "JCB" },
+  { id: "AMEX", label: "AMEX" },
+];
+
 export const TYPES = [
   { id: "신용카드", label: "신용카드" },
   { id: "체크카드", label: "체크카드" },
@@ -27,6 +37,12 @@ export function matchesHolder(card, selected) {
   return selected.some((s) => cardHolders.includes(s));
 }
 
+export function matchesBrands(card, selected) {
+  if (!selected.length) return true;
+  const cardBrands = card.brands || [];
+  return selected.some((b) => cardBrands.includes(b));
+}
+
 export function matchesFee(card, selected) {
   if (!selected.length) return true;
   if (card.feemin == null) return false;
@@ -42,6 +58,7 @@ export function buildFilterCounts(cards) {
   const types = {};
   const fees = {};
   const cats = {};
+  const brands = {};
   for (const c of cards) {
     if (c.status === "단종") continue; // 단종은 기본 숨김이므로 카운트에서 제외
     if (c.holder) {
@@ -59,8 +76,9 @@ export function buildFilterCounts(cards) {
       }
     }
     for (const cat of c.cats || []) cats[cat] = (cats[cat] || 0) + 1;
+    for (const br of c.brands || []) brands[br] = (brands[br] || 0) + 1;
   }
-  return { holders, types, fees, cats };
+  return { holders, types, fees, cats, brands };
 }
 
 // 혜택 카테고리 목록 (카운트 내림차순)

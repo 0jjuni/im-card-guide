@@ -1,7 +1,7 @@
 import { RotateCcw, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { cn } from "../lib/format";
-import { HOLDERS, TYPES, FEE_BUCKETS } from "../lib/filters";
+import { HOLDERS, TYPES, FEE_BUCKETS, BRANDS } from "../lib/filters";
 
 const Chip = ({ active, onClick, children, accent = "im" }) => {
   const palette =
@@ -39,6 +39,7 @@ export const FilterBar = ({
   holders,
   types,
   fees,
+  brands,
   cats,
   showDiscontinued,
   counts,
@@ -46,6 +47,7 @@ export const FilterBar = ({
   onToggleHolder,
   onToggleType,
   onToggleFee,
+  onToggleBrand,
   onToggleCat,
   onToggleDiscontinued,
   onReset,
@@ -114,6 +116,26 @@ export const FilterBar = ({
                 )}
               >
                 {counts.fees[b.id] || 0}
+              </span>
+            </Chip>
+          ))}
+        </Group>
+
+        <Group label="브랜드">
+          {BRANDS.filter((b) => (counts.brands[b.id] || 0) > 0).map((b) => (
+            <Chip
+              key={b.id}
+              active={brands.includes(b.id)}
+              onClick={() => onToggleBrand(b.id)}
+            >
+              {b.label}
+              <span
+                className={cn(
+                  "text-[10px]",
+                  brands.includes(b.id) ? "text-im-100" : "text-stone-400"
+                )}
+              >
+                {counts.brands[b.id] || 0}
               </span>
             </Chip>
           ))}
