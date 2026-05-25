@@ -169,6 +169,23 @@ export const CompareModal = ({ cards, onClose, onRemove }) => {
                   </td>
                 ))}
               </Row>
+              <Row label="상세 혜택">
+                {cards.map((c) => (
+                  <td
+                    key={c.id}
+                    className="p-3 align-top border-l border-stone-100"
+                  >
+                    {c.body ? (
+                      <div
+                        className="md-body md-body-compact max-h-[480px] overflow-y-auto pr-2"
+                        dangerouslySetInnerHTML={{ __html: c.body }}
+                      />
+                    ) : (
+                      <span className="text-[12px] text-stone-400">-</span>
+                    )}
+                  </td>
+                ))}
+              </Row>
               <Row label="상품설명서">
                 {cards.map((c) => (
                   <td
