@@ -1,4 +1,4 @@
-import { X, Download } from "lucide-react";
+import { X, Download, Printer } from "lucide-react";
 import { cn, typeBadge, statusBadge } from "../lib/format";
 
 const Row = ({ label, children }) => (
@@ -15,14 +15,14 @@ export const CompareModal = ({ cards, onClose, onRemove }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/50 flex items-stretch md:items-center justify-center p-2 md:p-6"
+      className="fixed inset-0 z-50 bg-black/50 flex items-stretch md:items-center justify-center p-2 md:p-6 compare-overlay"
       onClick={onClose}
     >
       <div
-        className="bg-white w-full max-w-6xl max-h-full flex flex-col rounded-md shadow-2xl border border-stone-200 overflow-hidden"
+        className="bg-white w-full max-w-6xl max-h-full flex flex-col rounded-md shadow-2xl border border-stone-200 overflow-hidden compare-print-area"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-stone-200 flex-shrink-0">
+        <div className="flex items-center justify-between p-4 border-b border-stone-200 flex-shrink-0 compare-no-print">
           <div>
             <h3 className="text-base font-bold text-stone-900">
               카드 비교 ({cards.length}장)
@@ -32,13 +32,28 @@ export const CompareModal = ({ cards, onClose, onRemove }) => {
               카드를 추가할 수 있습니다.
             </p>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 hover:bg-stone-100 rounded-sm flex-shrink-0"
-            aria-label="비교 닫기"
-          >
-            <X className="w-5 h-5 text-stone-600" />
-          </button>
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <button
+              onClick={() => window.print()}
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[12px] font-semibold text-im-700 hover:text-white hover:bg-im-600 border border-im-300 hover:border-im-600 rounded-sm transition-colors"
+            >
+              <Printer className="w-3.5 h-3.5" /> 인쇄
+            </button>
+            <button
+              onClick={onClose}
+              className="p-1.5 hover:bg-stone-100 rounded-sm"
+              aria-label="비교 닫기"
+            >
+              <X className="w-5 h-5 text-stone-600" />
+            </button>
+          </div>
+        </div>
+
+        <div className="hidden print:block px-6 py-4 border-b border-stone-300">
+          <h2 className="text-xl font-bold">iM뱅크 카드 비교</h2>
+          <p className="text-[11px] text-stone-500 mt-1">
+            iM뱅크 영업점 카드 가이드 · {new Date().toLocaleDateString("ko-KR")}
+          </p>
         </div>
 
         <div className="flex-1 overflow-auto">
@@ -77,7 +92,7 @@ export const CompareModal = ({ cards, onClose, onRemove }) => {
                       </div>
                       <button
                         onClick={() => onRemove(c.id)}
-                        className="p-0.5 hover:bg-stone-100 rounded-sm flex-shrink-0"
+                        className="p-0.5 hover:bg-stone-100 rounded-sm flex-shrink-0 compare-no-print"
                         aria-label="비교에서 제거"
                       >
                         <X className="w-3.5 h-3.5 text-stone-400" />

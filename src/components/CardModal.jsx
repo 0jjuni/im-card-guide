@@ -10,7 +10,7 @@ export const CardModal = ({ card, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white max-w-2xl w-full max-h-[88vh] flex flex-col rounded-md shadow-2xl border border-stone-200"
+        className="bg-white max-w-4xl w-full max-h-[92vh] flex flex-col rounded-md shadow-2xl border border-stone-200"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between p-4 border-b border-stone-200 flex-shrink-0">
@@ -63,7 +63,7 @@ export const CardModal = ({ card, onClose }) => {
           </div>
         )}
 
-        <div className="p-5 overflow-y-auto">
+        <div className="px-6 md:px-8 py-5 overflow-y-auto">
           <div
             className="md-body"
             dangerouslySetInnerHTML={{ __html: card.body }}

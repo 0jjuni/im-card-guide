@@ -139,6 +139,51 @@ body {
   padding: 0;
 }
 
+/* 인쇄: 비교 모달만 보이게 + 스크롤·오버레이 해제 */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .compare-print-area,
+  .compare-print-area * {
+    visibility: visible;
+  }
+  .compare-print-area {
+    position: absolute !important;
+    inset: 0;
+    width: 100%;
+    max-width: 100% !important;
+    max-height: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+  }
+  .compare-print-area .md-body-compact,
+  .compare-print-area .overflow-y-auto,
+  .compare-print-area .overflow-auto {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .compare-no-print {
+    display: none !important;
+  }
+  .compare-overlay {
+    position: static !important;
+    background: white !important;
+    padding: 0 !important;
+  }
+  @page {
+    size: A4 landscape;
+    margin: 12mm;
+  }
+  /* 인쇄에서 색 보존 */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
 /* 비교 모달 안의 컴팩트 본문 */
 .md-body-compact {
   font-size: 12.5px;
