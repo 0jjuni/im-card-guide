@@ -4,6 +4,8 @@ import { Brand } from "../components/Brand";
 import { FilterBar } from "../components/FilterBar";
 import { CardGrid } from "../components/CardGrid";
 import { CardModal } from "../components/CardModal";
+import { CompareBar } from "../components/CompareBar";
+import { CompareModal } from "../components/CompareModal";
 import {
   matchesHolder,
   matchesFee,
@@ -21,6 +23,9 @@ export const GuidePage = ({ cards }) => {
   const [cats, setCats] = useState([]);
   const [showDiscontinued, setShowDiscontinued] = useState(false);
   const [openId, setOpenId] = useState(null);
+  const [compareIds, setCompareIds] = useState([]);
+  const [compareOpen, setCompareOpen] = useState(false);
+  const MAX_COMPARE = 4;
 
   const counts = useMemo(() => buildFilterCounts(cards), [cards]);
   const catList = useMemo(() => listCats(cards), [cards]);
@@ -67,20 +72,34 @@ export const GuidePage = ({ cards }) => {
     setShowDiscontinued(false);
   };
 
+  const toggleCompare = (id) => {
+    setCompareIds((prev) => {
+      if (prev.includes(id)) return prev.filter((x) => x !== id);
+      if (prev.length >= MAX_COMPARE) return prev;
+      return [...prev, id];
+    });
+  };
+  const compareCards = compareIds
+    .map((id) => cards.find((c) => c.id === id))
+    .filter(Boolean);
+
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "Escape") setOpenId(null);
+      if (e.key === "Escape") {
+        setOpenId(null);
+        setCompareOpen(false);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = openCard ? "hidden" : "";
+    document.body.style.overflow = openCard || compareOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [openCard]);
+  }, [openCard, compareOpen]);
 
   const hasFilter =
     query.trim() ||
@@ -166,10 +185,34 @@ export const GuidePage = ({ cards }) => {
           </div>
         </div>
 
-        <CardGrid cards={filtered} onOpen={setOpenId} />
+        <CardGrid
+          cards={filtered}
+          onOpen={setOpenId}
+          selectedIds={compareIds}
+          onToggleSelect={toggleCompare}
+          maxSelect={MAX_COMPARE}
+        />
+
+        {compareIds.length > 0 && <div className="h-16" aria-hidden="true" />}
       </main>
 
+      <CompareBar
+        cards={cards}
+        selectedIds={compareIds}
+        onRemove={toggleCompare}
+        onClear={() => setCompareIds([])}
+        onOpenCompare={() => setCompareOpen(true)}
+        maxSelect={MAX_COMPARE}
+      />
+
       <CardModal card={openCard} onClose={() => setOpenId(null)} />
+      {compareOpen && (
+        <CompareModal
+          cards={compareCards}
+          onClose={() => setCompareOpen(false)}
+          onRemove={toggleCompare}
+        />
+      )}
     </div>
   );
 };

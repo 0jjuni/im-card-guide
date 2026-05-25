@@ -1,7 +1,12 @@
 import { CardTile } from "./CardTile";
 
-// 검색·필터 결과 리스트
-export const CardGrid = ({ cards, onOpen }) => {
+export const CardGrid = ({
+  cards,
+  onOpen,
+  selectedIds = [],
+  onToggleSelect,
+  maxSelect = 4,
+}) => {
   if (!cards.length) {
     return (
       <div className="bg-white border border-stone-200 rounded-md p-12 text-center">
@@ -13,10 +18,19 @@ export const CardGrid = ({ cards, onOpen }) => {
     );
   }
 
+  const canSelectMore = selectedIds.length < maxSelect;
+
   return (
     <div className="bg-white border border-stone-200 rounded-md divide-y divide-stone-100 overflow-hidden">
       {cards.map((c) => (
-        <CardTile key={c.id} card={c} onOpen={onOpen} />
+        <CardTile
+          key={c.id}
+          card={c}
+          onOpen={onOpen}
+          selected={selectedIds.includes(c.id)}
+          onToggleSelect={onToggleSelect}
+          canSelectMore={canSelectMore}
+        />
       ))}
     </div>
   );
