@@ -68,6 +68,14 @@ export const CompareModal = ({ cards, onClose, onRemove }) => {
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
+                        {c.imageUrl && (
+                          <img
+                            src={c.imageUrl}
+                            alt=""
+                            className="w-full max-w-[140px] h-16 object-contain rounded-sm bg-stone-50 border border-stone-100 mb-2"
+                            onError={(e) => { e.currentTarget.style.display = "none"; }}
+                          />
+                        )}
                         <div className="flex items-center gap-1 mb-1 flex-wrap">
                           <span
                             className={cn(

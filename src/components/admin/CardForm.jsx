@@ -32,6 +32,7 @@ export const CardForm = ({ card, onSave, onCancel, onDelete, saving }) => {
     summary: card?.summary || "",
     cats: card?.cats || [],
     body: card?.body || "",
+    imageUrl: card?.imageUrl || "",
   }));
 
   const set = (k, v) => setF((p) => ({ ...p, [k]: v }));
@@ -179,6 +180,28 @@ export const CardForm = ({ card, onSave, onCancel, onDelete, saving }) => {
                   {c.name}
                 </button>
               ))}
+            </div>
+          </Field>
+
+          <Field label="카드 이미지" hint="이미지 URL (https://...)">
+            <div className="flex gap-3 items-start">
+              <input
+                className={cn(inputCls, "flex-1")}
+                value={f.imageUrl}
+                onChange={(e) => set("imageUrl", e.target.value)}
+                placeholder="https://example.com/card.png"
+                type="url"
+              />
+              {f.imageUrl && (
+                <div className="w-20 h-12 flex-shrink-0 border border-stone-200 rounded-sm bg-stone-50 overflow-hidden">
+                  <img
+                    src={f.imageUrl}
+                    alt="미리보기"
+                    className="w-full h-full object-contain"
+                    onError={(e) => { e.currentTarget.style.opacity = "0.2"; }}
+                  />
+                </div>
+              )}
             </div>
           </Field>
 

@@ -13,7 +13,15 @@ export const CardModal = ({ card, onClose }) => {
         className="bg-white max-w-4xl w-full max-h-[92vh] flex flex-col rounded-md shadow-2xl border border-stone-200"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between p-4 border-b border-stone-200 flex-shrink-0">
+        <div className="flex items-start justify-between p-4 border-b border-stone-200 flex-shrink-0 gap-3">
+          {card.imageUrl && (
+            <img
+              src={card.imageUrl}
+              alt=""
+              className="w-24 h-16 flex-shrink-0 object-contain rounded-sm bg-stone-50 border border-stone-100"
+              onError={(e) => { e.currentTarget.style.display = "none"; }}
+            />
+          )}
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
               <span

@@ -31,6 +31,7 @@ const fromRow = (r) => ({
   brands: r.brands || [],
   affiliated: !!r.affiliated,
   minSpend: r.min_spend ?? null,
+  imageUrl: r.image_url || "",
 });
 
 const toRow = (c) => ({
@@ -51,6 +52,7 @@ const toRow = (c) => ({
   brands: c.brands || [],
   affiliated: !!c.affiliated,
   min_spend: c.minSpend ?? null,
+  image_url: c.imageUrl || null,
 });
 
 async function rest(path, { method = "GET", body, prefer } = {}) {

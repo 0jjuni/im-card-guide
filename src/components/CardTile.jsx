@@ -62,6 +62,16 @@ export const CardTile = ({
           {card.type.replace("카드", "")}
         </span>
 
+        {card.imageUrl && (
+          <img
+            src={card.imageUrl}
+            alt=""
+            className="w-12 h-8 flex-shrink-0 object-contain rounded-sm bg-stone-50 border border-stone-100"
+            loading="lazy"
+            onError={(e) => { e.currentTarget.style.display = "none"; }}
+          />
+        )}
+
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
             <span className="font-bold text-stone-900 text-[14px] truncate">
